@@ -36,6 +36,11 @@ __all__ = ["Request", "HTTPRequest"]
 RAW_REQUEST = """{method} /{path} HTTP/1.1\r\nHost: {host}\r\nContent-Type: {content_type}\r\nContent-Length: {content_length}\r\n\r\n{data}"""
 
 class Request:
+	"""The request that is passed into a callable or an endpoint callback
+
+	Contains an event loop, method, headers and path to use in your callable or route callback.
+	
+	"""
 	def __init__(self, method : str, path : str, headers : dict, loop) -> None:
 		self.method = method
 		self.path = path
@@ -47,7 +52,7 @@ class HTTPRequest:
 		self.request = request
 		self.loop : asyncio.AbstractEventLoop = loop
 
-	def parse(self):
+	def parse(self) -> Request:
 		request_str = self.request
 		part_one, part_two = request_str.split('\r\n\r\n')
 		http_lines = part_one.split('\r\n')

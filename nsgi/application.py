@@ -31,6 +31,12 @@ from .route import Route
 __all__ = ("AsyncServer",)
 
 class AsyncServer(object):
+	"""A server you can run with the `Runner` class
+
+	This class makes a pre-made server object and makes it simple to subclass and add features to it.\n
+	Any contributions to the github is appreciated.
+	
+	"""
 	def __init__(self) -> None:
 		self.loop = asyncio.get_event_loop()
 		self.routes = {}
