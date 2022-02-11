@@ -30,7 +30,7 @@ runner = Runner(s)
 @server.route("/", method="GET")
 async def index(request):
 	response = Response("Hello.")
-	return await response()
+	return await response() # or return response
 
 runner.run()
 ```
