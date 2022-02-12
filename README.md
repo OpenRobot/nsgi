@@ -24,8 +24,8 @@ class Server(AsyncServer):
 	def __init__(self) -> None:
 		super().__init__()
 
-s = server = Server()
-runner = Runner(s)
+server = Server()
+runner = Runner(server)
 
 @server.route("/", method="GET")
 async def index(request):
