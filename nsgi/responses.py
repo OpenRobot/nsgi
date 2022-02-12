@@ -33,8 +33,8 @@ class ResponseData:
 	def __init__(self, status, status_msg, type) -> None:
 		self.lines = f"""HTTP/1.1 {status} {status_msg}\r\nContent-Type: {type}\r\nContent-Encoding: UTF-8\r\nAccept-Ranges: bytes\r\nConnection: closed"""
 
-	def __repr__(self) -> typing.Any:
-		return self.lines
+	def output(self) -> typing.Any:
+		return bytes(self.lines, "ascii")
 
 	def add_line(self, data : str):
 		self.lines += f"\r\n{data}"
@@ -63,7 +63,7 @@ class Response:
 		for header in self.headers:
 			res.add_line(f"{header}: {self.headers[header]}")
 		res.add_response(self.data)
-		return bytes(repr(res), "ascii")
+		return res.output()
 
 class HTMLResponse(Response):
 	def __init__(self, data: typing.Any, status_code=200, content_type: str = "text/html") -> None:

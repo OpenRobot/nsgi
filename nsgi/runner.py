@@ -30,7 +30,7 @@ import typing
 from .application import AsyncServer
 from .models import *
 from .route import Route
-from .responses import HTMLResponse
+from .responses import HTMLResponse, Response
 
 
 __all__ = ["Runner"]
@@ -45,7 +45,7 @@ class Runner:
 	async def read_request(self, client):
 		request = b''
 		while True:
-			chunk = (await self.loop.sock_recv(client, 50)).decode('utf8')
+			chunk = (await self.loop.sock_recv(client, 50))
 			request += chunk
 			if len(chunk) < 50:
 				break
@@ -60,6 +60,8 @@ class Runner:
 			response = await self.app(request)
 			resp = response
 			if not isinstance(resp, bytes):
+				if isinstance(resp, str):
+					response = Response(resp)
 				resp = await response()
 			await self.loop.sock_sendall(client, resp)
 			client.close()
@@ -70,6 +72,8 @@ class Runner:
 					ran = await route_(request)
 					response = await ran()
 					if not isinstance(response, bytes):
+						if isinstance(response, str):
+							response = Response(response)
 						response = await response()
 					await self.loop.sock_sendall(client, response)
 					client.close()

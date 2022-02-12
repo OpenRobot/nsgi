@@ -1,4 +1,3 @@
-from nsgi.application import AsyncServer
 from nsgi.runner import Runner
 from nsgi.responses import Response
 from nsgi import Request
