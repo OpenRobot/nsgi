@@ -35,12 +35,12 @@ from .responses import HTMLResponse
 
 __all__ = ["Runner", "RawRunner"]
 
-class Runner():
-	def __init__(self, application : AsyncServer) -> None:
-		self.loop = application.loop
+class Runner:
+	def __init__(self, application : typing.Union[AsyncServer, typing.Callable]) -> None:
+		self.loop = asyncio.get_event_loop()
 		self.app = application
-		self.server = s = server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 	async def read_request(self, client):
 		request = b''
