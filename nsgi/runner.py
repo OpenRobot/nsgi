@@ -54,7 +54,7 @@ class Runner:
 	async def handle_server(self, client: socket.socket):
 		request: bytes = await self.read_request(client)
 		request = request.decode('utf8')
-		request = HTTPRequest(request, self.app)
+		request = HTTPRequest(request, self.loop)
 		request = request.parse()
 		if asyncio.iscoroutinefunction(self.app):
 			response = await self.app(request)

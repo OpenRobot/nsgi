@@ -27,6 +27,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     packages=["nsgi", "nsgi.plugins"],
-	install_requires=["discord.py", "discord-next-ipc @ git+https://github.com/FrostiiWeeb/discord-next-ipc"],
+	install_requires=["aiohttp==3.7.4.post0", "discord.py==1.7.3", "discord-next-ipc @ git+https://github.com/FrostiiWeeb/discord-next-ipc"],
     python_requires=">=3.7",
 )

@@ -1,15 +1,20 @@
-import discord.ext.commands.bot
+import discord
 from discord.ext import commands
 from discord.http import HTTPClient
 from discord.ext import ipc
+from typing import *
+import asyncio
 
-class Bot(discord.ext.commands.bot.Bot):
-	def __init__(self, command_prefix, help_command=commands.DefaultHelpCommand(), description=None, loop = None, **options):
-		super().__init__(command_prefix, help_command, description, **options)
-		self.loop = loop
+class Bot(discord.Client):
+	def __init__(self, *, loop: Optional[asyncio.AbstractEventLoop] = None, **options: Any):
+		super().__init__(loop=loop, intents=discord.Intents.all(), **options)
 		self.server = ipc.Server(self, secret_key="AIO_SERVER")
 		self.client = ipc.Client(port=8765, secret_key="AIO_SERVER")
 
-	def run(self, token : str):
-		self.server.start()
-		self.loop.create_task(super().start(token))
+	@property
+	def user(self):
+		return self.__user
+
+	async def start(self, bot = True, *args, **kwargs):
+		ran = await self.http.static_login(bot=bot, *args, **kwargs)
+		self.__user = ran
