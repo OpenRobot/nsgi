@@ -16,5 +16,5 @@ class Bot(discord.Client):
 		return self.__user
 
 	async def start(self, bot = True, *args, **kwargs):
-		ran = await self.http.static_login(bot=bot, *args, **kwargs)
-		self.__user = ran
+		self.server.start()
+		return super().start(*args, **kwargs)
