@@ -25,11 +25,22 @@ SOFTWARE.
 
 import re
 import typing
-from http import HTTPStatus
+from http import HTTPStatus, cookies
 
 __all__ = ["Response", "HTMLResponse", "JSONResponse"]
 
-RES = 'HTTP/1.1 {status} {status_msg}\r\nContent-Type: {type}\r\nContent-Encoding: UTF-8\r\nAccept-Ranges: bytes\r\nConnection: closed\r\n\r\n{data}'
+class ResponseData:
+	def __init__(self, status, status_msg, type) -> None:
+		self.lines = f"""HTTP/1.1 {status} {status_msg}\r\nContent-Type: {type}\r\nContent-Encoding: UTF-8\r\nAccept-Ranges: bytes\r\nConnection: closed"""
+
+	def __repr__(self) -> typing.Any:
+		return self.lines
+
+	def add_line(self, data : str):
+		self.lines += f"\r\n{data}"
+
+	def add_response(self, data):
+		self.lines += f"\r\n\r\n{data}"
 
 class Response:
 	def __init__(self, data : typing.Any, status_code = 200, content_type : str = "text/html") -> None:
@@ -37,10 +48,22 @@ class Response:
 		self.status_msg = (HTTPStatus(status_code)).phrase
 		self.content_type = content_type
 		self.data = data
+		self.headers = {}
 
+	def set_cookie(self, name : str, value : typing.Any):
+		cookie = cookies.SimpleCookie()
+		cookie[name] = value
+		output = cookie.output()
+		output = output.split(":")
+		self.headers[output[0]] = output[1]
+
+		
 	async def __call__(self):
-		res = RES.format(status=self.status_code, status_msg=self.status_msg, type=self.content_type, data=self.data)
-		return bytes(res, "ascii")
+		res = ResponseData(self.status_code, self.status_msg, self.content_type)
+		for header in self.headers:
+			res.add_line(f"{header}: {self.headers[header]}")
+		res.add_response(self.data)
+		return bytes(repr(res), "ascii")
 
 class HTMLResponse(Response):
 	def __init__(self, data: typing.Any, status_code=200, content_type: str = "text/html") -> None:
