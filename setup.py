@@ -10,7 +10,7 @@ with open("nsgi/__init__.py") as f:
         r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE
     ).group(1)
 
-extras_require = "git+https://github.com/FrostiiWeeb/discord-next-ipc"
+extras_require = "git+https://github.com/FrostiiWeeb/discord-next-ipc==2.1.3"
 
 setuptools.setup(
     name="nsgi",
