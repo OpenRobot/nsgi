@@ -4,10 +4,9 @@ from nsgi.runner import Runner
 from nsgi import Request
 
 async def main(request: Request):
+	bot = Bot(loop=request.loop)
+	await bot.start(token="token")
 	if request.path == "/":
-		bot = Bot(loop=request.loop)
-		await bot.start(token="token")
-		await (await bot.fetch_channel(channel_id)).send("Hello!")
 		return Response("hello")
 
 runner = Runner(main)
