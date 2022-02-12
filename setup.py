@@ -26,8 +26,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT",
         "Operating System :: OS Independent",
     ],
-	extras_require={"bot": ["git+https://github.com/FrostiiWeeb/discord-next-ipc"]},
     packages=["nsgi", "nsgi.plugins"],
-	install_requires=["discord.py"],
+	install_requires=["discord.py", "git+https://github.com/FrostiiWeeb/discord-next-ipc"],
     python_requires=">=3.7",
 )
