@@ -5,7 +5,6 @@ from nsgi import Request
 
 async def main(request: Request):
 	bot = Bot(loop=request.loop)
-	await bot.start(token="token")
 	if request.path == "/":
 		return Response("hello")
 
