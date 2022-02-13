@@ -15,6 +15,7 @@ setuptools.setup(
     version=version,
     author="Alex Hutz",
 	long_description=desc,
+	long_description_content_type="text/markdown",
     author_email="frostiitheweeb@outlook.com",
     description="The newest contender in Server Gateway interface.",
     url="https://github.com/OpenRobot-Packages/nsgi",
@@ -23,10 +24,9 @@ setuptools.setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT",
         "Operating System :: OS Independent",
     ],
     packages=["nsgi", "nsgi.plugins"],
-	install_requires=["aiohttp==3.7.4.post0", "discord.py==1.7.3", "discord-next-ipc @ git+https://github.com/FrostiiWeeb/discord-next-ipc"],
+	install_requires=["aiohttp==3.7.4.post0", "discord.py==1.7.3"],
     python_requires=">=3.7",
 )

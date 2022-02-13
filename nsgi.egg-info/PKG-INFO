@@ -1,3 +1,19 @@
+Metadata-Version: 2.1
+Name: nsgi
+Version: 1.0.4
+Summary: The newest contender in Server Gateway interface.
+Home-page: https://github.com/OpenRobot-Packages/nsgi
+Author: Alex Hutz
+Author-email: frostiitheweeb@outlook.com
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/OpenRobot-Packages/nsgi/issues
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # nsgi
 
 The newest contender in Server Gateway Interface.
@@ -34,3 +50,4 @@ async def index(request):
 
 runner.run()
 ```
+

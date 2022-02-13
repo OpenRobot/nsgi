@@ -52,4 +52,4 @@ from .responses import (JSONResponse, Response, HTMLResponse)
 from .route import Route
 from .models import *
 
-__version__ = "1.0.0"
+__version__ = "1.0.4"
