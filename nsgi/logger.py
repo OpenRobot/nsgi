@@ -23,18 +23,27 @@ SOFTWARE.
 
 """
 
-import discord
-from discord.ext import commands
-from discord.http import HTTPClient
-from discord.ext import ipc
-from typing import *
-import asyncio
+import logging
 
-class Bot(discord.Client):
-	def __init__(self, *, loop: Optional[asyncio.AbstractEventLoop] = None, **options: Any):
-		super().__init__(loop=loop, intents=discord.Intents.all(), **options)
-		self.server = ipc.Server(self, secret_key="AIO_SERVER")
-		self.client = ipc.Client(port=8765, secret_key="AIO_SERVER")
+class CustomFormatter(logging.Formatter):
 
-	async def start(self, bot = True, *args, **kwargs):
-		return super().start(*args, **kwargs)
+    grey = "\x1b[38;20m"
+    yellow = "\x1b[33;20m"
+    red = "\x1b[31;20m"
+    bold_red = "\x1b[31;1m"
+    reset = "\x1b[0m"
+    green = "\x1b[1;32m"
+    format = "%(name)s: %(levelname)s: %(message)s (%(filename)s:%(lineno)d)"
+
+    FORMATS = {
+        logging.DEBUG: grey + format + reset,
+        logging.INFO: green + format + reset,
+        logging.WARNING: yellow + format + reset,
+        logging.ERROR: red + format + reset,
+        logging.CRITICAL: bold_red + format + reset
+    }
+
+    def format(self, record):
+        log_fmt = self.FORMATS.get(record.levelno)
+        formatter = logging.Formatter(log_fmt)
+        return formatter.format(record)

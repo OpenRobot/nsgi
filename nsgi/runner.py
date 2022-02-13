@@ -26,45 +26,79 @@ SOFTWARE.
 import asyncio
 import socket
 import typing
+import logging
+import sys
 
 from .application import AsyncServer
 from .models import *
 from .route import Route
 from .responses import HTMLResponse, Response
+from .logger import CustomFormatter
 
 
 __all__ = ["Runner"]
 
 class Runner:
+	"""Runs your application with `asyncio` and `sockets`.
+
+	This class runs your application, it supports a callable-based application and a subclass of `AsyncServer`.
+	It also has a default logger.
+	"""
+	CHUNK_LIMIT = 50
 	def __init__(self, application : typing.Union[AsyncServer, typing.Callable]) -> None:
 		self.loop = asyncio.get_event_loop()
 		self.app = application
 		self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.logger = logging.getLogger("NSGI")
+		self.logger.setLevel(logging.DEBUG)
+		ch = logging.StreamHandler()
+		ch.setLevel(logging.DEBUG)
+		ch.setFormatter(CustomFormatter())
+		self.logger.addHandler(ch)
+
+	def format_logger(self, request : Request, status, phrase):
+		return f"{request.headers.get('Host')} - {request.method} {request.path} {status} {phrase}"
 
 	async def read_request(self, client):
 		request = b''
 		while True:
-			chunk = (await self.loop.sock_recv(client, 50))
+			chunk = (await self.loop.sock_recv(client, Runner.CHUNK_LIMIT))
 			request += chunk
-			if len(chunk) < 50:
+			if len(chunk) < Runner.CHUNK_LIMIT:
 				break
 		return request	
 
 	async def handle_server(self, client: socket.socket):
 		request: bytes = await self.read_request(client)
 		request = request.decode('utf8')
-		request = HTTPRequest(request, self.loop)
-		request = request.parse()
+		request : HTTPRequest = HTTPRequest(request, self.loop)
+		request : Request = request.parse()
 		if asyncio.iscoroutinefunction(self.app):
 			response = await self.app(request)
 			resp = response
+			old_resp : Response = resp
 			if not isinstance(resp, bytes):
 				if isinstance(resp, str):
 					response = Response(resp)
-				resp = await response()
-			await self.loop.sock_sendall(client, resp)
-			client.close()
+				try:
+					resp = await response()
+				except Exception:
+					self.logger.info(self.format_logger(request=request, status=404, phrase="Not Found"))
+					h = """<!DOCTYPE html>\n<h1>\n404\n</h1>\n<h2>\nNot Found\n</h2>"""
+					response = HTMLResponse(h, status_code=404)
+					response = await response()
+					await self.loop.sock_sendall(client, response)
+					client.close()
+				else:
+					await self.loop.sock_sendall(client, resp)
+					self.logger.info(self.format_logger(request=request, status=old_resp.status_code, phrase=old_resp.status_msg))
+					client.close()
+			else:
+				old_resp = Response(old_resp, content_type="application/octet-stream")
+				await self.loop.sock_sendall(client, resp)
+				self.logger.info(self.format_logger(request=request, status=old_resp.status_code, phrase=old_resp.status_msg))
+				client.close()
 		else:
 			for route in self.app.routes:
 				if request.path == route and request.method == self.app.routes[route].method:
@@ -95,6 +129,14 @@ class Runner:
 
 	def run(self, host : str = "localhost", port : int = 5000):
 		try:
-			self.loop.run_until_complete(self.start(host, port))
+			asyncio.ensure_future(self.start(host, port), loop=self.loop)
+			self.loop.run_forever()
 		except KeyboardInterrupt:
+			self.loop.stop()
 			self.server.close()
+			try:
+				import sys
+				sys.exit("what")
+			except SystemExit:
+				import os
+				os._exit(0)

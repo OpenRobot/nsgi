@@ -65,6 +65,10 @@ class Response:
 		res.add_response(self.data)
 		return res.output()
 
+class ByteResponse(Response):
+	def __init__(self, data: typing.Any, status_code=200, content_type: str = "application/octet-stream") -> None:
+		super().__init__(data, status_code, content_type)
+
 class HTMLResponse(Response):
 	def __init__(self, data: typing.Any, status_code=200, content_type: str = "text/html") -> None:
 		super().__init__(data, status_code, content_type)
