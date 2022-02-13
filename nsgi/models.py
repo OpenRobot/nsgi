@@ -54,10 +54,13 @@ class HTTPRequest:
 
 	def parse(self) -> Request:
 		request_str = self.request
-		part_one, part_two = request_str.split('\r\n\r\n')
-		http_lines = part_one.split('\r\n')
-		_, http_req = part_one.split("\r\n", 1)
-		method, url, version = http_lines[0].split(' ')
-		message = email.message_from_file(io.StringIO(http_req))
-		headers = dict(message.items())
-		return Request(method, url, headers, self.loop)
+		try:
+			part_one, part_two = request_str.split('\r\n\r\n')
+			http_lines = part_one.split('\r\n')
+			_, http_req = part_one.split("\r\n", 1)
+			method, url, version = http_lines[0].split(' ')
+			message = email.message_from_file(io.StringIO(http_req))
+			headers = dict(message.items())
+			return Request(method, url, headers, self.loop)
+		except ValueError:
+			return None

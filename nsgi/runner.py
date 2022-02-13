@@ -74,6 +74,9 @@ class Runner:
 		request = request.decode('utf8')
 		request : HTTPRequest = HTTPRequest(request, self.loop)
 		request : Request = request.parse()
+		if not request:
+			self.logger.info("Not enough arguments for parse, ignoring...")
+			client.close()
 		if asyncio.iscoroutinefunction(self.app):
 			response = await self.app(request)
 			resp = response

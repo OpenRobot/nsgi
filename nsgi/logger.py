@@ -33,7 +33,7 @@ class CustomFormatter(logging.Formatter):
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
     green = "\x1b[1;32m"
-    format = "%(name)s: %(levelname)s: %(message)s (%(filename)s:%(lineno)d)"
+    format = "[%(name)s] %(levelname)s: %(message)s (%(filename)s:%(lineno)d)"
 
     FORMATS = {
         logging.DEBUG: grey + format + reset,

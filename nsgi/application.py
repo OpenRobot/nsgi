@@ -45,3 +45,18 @@ class AsyncServer(object):
 		def wrapper(func : typing.Callable):
 			self.routes[path] = Route(path, func, method)
 		return wrapper
+
+	def get(self, path : str, method : str = "GET"):
+		def wrapper(func : typing.Callable):
+			self.routes[path] = Route(path, func, method)
+		return wrapper
+
+	def patch(self, path : str, method : str = "PATCH"):
+		def wrapper(func : typing.Callable):
+			self.routes[path] = Route(path, func, method)
+		return wrapper
+
+	def post(self, path : str, method : str = "POST"):
+		def wrapper(func : typing.Callable):
+			self.routes[path] = Route(path, func, method)
+		return wrapper

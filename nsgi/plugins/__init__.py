@@ -24,3 +24,4 @@ SOFTWARE.
 """
 
 from .discord_bot import Bot
+from .ratelimit import RateLimiter

@@ -23,15 +23,16 @@ SOFTWARE.
 
 """
 
-import aiohttp
+import typing
 import asyncio
 
+from ..application import AsyncServer
 
-async def main():
-	session = aiohttp.ClientSession()
-	response = await session.get("http://localhost:5000/")
-	response = await response.text()
-	await session.close()
-	return print(response)
+# TODO: Finish RateLimiter
 
-asyncio.run(main()) # this would return your response content you gave in your code
+class RateLimiter:
+	def __init__(self, application : typing.Union[AsyncServer, typing.Callable]):
+		self.application = application
+
+	async def init(self):
+		...
